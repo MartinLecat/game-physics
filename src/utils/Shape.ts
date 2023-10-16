@@ -6,22 +6,29 @@ export default interface Shape {
     indexes?: { x: number; y: number }[];
     id: number;
 
-    update(dt: number): void;
-    getName(): string;
-    getPosition(): Vector;
-    setPosition(x: number, y: number): void;
-    setPosition(v: Vector): void;
-    setAcceleration(x: number, y: number): void;
-    setAcceleration(v: Vector): void;
-    setFixed(f: boolean): void;
+    setFixed(f: boolean): this;
     isFixed(): boolean;
-    draw(context: CanvasRenderingContext2D, debug: boolean): void;
+
+    setAcceleration(x: number, y: number): this;
+    setAcceleration(v: Vector): this;
+    getAcceleration(): Vector;
+
+    setPosition(x: number, y: number): this;
+    setPosition(v: Vector): this;
+    getPosition(): Vector;
+
+    move(x: number, y: number): this;
+    move(v: Vector): this;
+
     getGridPosition(cellSize: number): {
         minCol: number;
         maxCol: number;
         minRow: number;
         maxRow: number;
     };
+    draw(context: CanvasRenderingContext2D, debug: boolean): this;
+    update(dt: number): this;
+    getName(): string;
 }
 
 export function isShape(sh: Shape, name: "Circle"): sh is Circle;
