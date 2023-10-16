@@ -60,8 +60,8 @@ export default class Engine {
             if (dist < shape1.getRadius() + shape2.getRadius()) {
                 let t = diff.scale(1 / dist);
                 let delta = shape1.getRadius() + shape2.getRadius() - dist;
-                if (!shape1.isFixed()) shape1.setPosition(shape1.getPosition().sum(t.scale(delta / 2)));
-                if (!shape2.isFixed()) shape2.setPosition(shape2.getPosition().sum(t.scale(-delta / 2)));
+                if (!shape1.isFixed()) shape1.move(t.scale(delta / 2));
+                if (!shape2.isFixed()) shape2.move(t.scale(-delta / 2));
             }
         } else if (isShape(shape1, "Circle") && isShape(shape2, "Rectangle")) {
             let fakeCenterY = new Vector(shape1.getPosition().x, shape2.getCenter().y);
@@ -70,36 +70,11 @@ export default class Engine {
             if (dist < shape1.getRadius() + shape2.getHeight() / 2) {
                 let t = diff.scale(1 / dist);
                 let delta = shape1.getRadius() + shape2.getHeight() / 2 - dist;
-                if (!shape1.isFixed()) shape1.setPosition(shape1.getPosition().sum(t.scale(delta / 2)));
-                // if (!shape2.isFixed()) shape2.setPosition(shape2.getPosition().sum(t.scale(-delta / 2)));
+                if (!shape1.isFixed()) shape1.move(t.scale(delta / 2));
+                if (!shape2.isFixed()) shape2.move(t.scale(-delta / 2));
             }
-            // let shape2Center = shape2.getCenter();
-            // let w = shape2.getWidth() / 2;
-            // let h = shape2.getHeight() / 2;
-            // let deltaX = Math.abs(shape1.getPosition().x - shape2Center.x);
-            // let deltaY = Math.abs(shape1.getPosition().y - shape2Center.y);
-            // if (deltaX > shape1.getRadius() + w || deltaY > shape1.getRadius() + h) return;
-            // let circleDistance = new Vector(
-            //     Math.abs(shape1.getPosition().x - shape2.getPosition().x - w),
-            //     Math.abs(shape1.getPosition().y - shape2.getPosition().y - h)
-            // );
-            // if (circleDistance.x <= w) {
-            //     // coll
-            //     console.log("COLLISION", "A");
-            //     let t = circleDistance.scale(1 / circleDistance.length());
-            //     let delta = shape1.getRadius() + deltaX - circleDistance.length();
-            //     if (!shape1.isFixed()) shape1.setPosition(shape1.getPosition().sum(t.scale(0.5 * delta)));
-            //     if (!shape2.isFixed()) shape2.setPosition(shape2.getPosition().sum(t.scale(-0.5 * delta)));
-            // }
-            // if (circleDistance.y <= h) {
-            //     // coll
-            //     console.log("COLLISION", "B");
-            // }
-            // let cornerDistance = Math.pow(circleDistance.x - w, 2) + Math.pow(circleDistance.y - h, 2);
-            // if (cornerDistance <= shape1.getRadius() ** 2) {
-            //     // coll
-            //     console.log("COLLISION", "C");
-            // }
+        } else if (isShape(shape1, "Rectangle") && isShape(shape2, "Circle")) {
+            this.checkCollisions(shape2, shape1);
         }
     }
     applyConstraints() {
