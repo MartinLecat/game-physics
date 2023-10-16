@@ -33,7 +33,7 @@ document.body.appendChild(stopBtn);
 document.body.appendChild(loopBtn);
 document.body.appendChild(resetBtn);
 
-Engine.DEBUG = false;
+Engine.DEBUG = true;
 const engine = new Engine(canvas, [
     new Circle({ x: 250, y: 240, radius: 25 }),
     // new Circle({ x: 250, y: 650, radius: 250, fixed: true }),
