@@ -23,8 +23,12 @@ export default class Engine {
         this.lastUpdate = Date.now();
     }
 
-    insertShape(sh: Shape) {
-        this.shapes.push(sh);
+    insertShape(sh: Shape | Shape[]) {
+        if (Array.isArray(sh)) {
+            this.shapes.push(...sh);
+        } else {
+            this.shapes.push(sh);
+        }
     }
 
     createCollisionGrid() {
@@ -57,7 +61,7 @@ export default class Engine {
             let diff = shape1.getPosition().sum(shape2.getPosition().scale(-1));
             let dist = diff.length();
 
-            if (dist < shape1.getRadius() + shape2.getRadius()) {
+            if (dist <= shape1.getRadius() + shape2.getRadius()) {
                 let t = diff.scale(1 / dist);
                 let delta = shape1.getRadius() + shape2.getRadius() - dist;
                 if (!shape1.isFixed()) shape1.move(t.scale(delta / 2));
@@ -65,14 +69,24 @@ export default class Engine {
             }
         } else if (isShape(shape1, "Circle") && isShape(shape2, "Rectangle")) {
             let fakeCenterY = new Vector(shape1.getPosition().x, shape2.getCenter().y);
-            let diff = shape1.getPosition().sum(fakeCenterY.scale(-1));
-            let dist = diff.length();
-            if (dist < shape1.getRadius() + shape2.getHeight() / 2) {
-                let t = diff.scale(1 / dist);
-                let delta = shape1.getRadius() + shape2.getHeight() / 2 - dist;
-                if (!shape1.isFixed()) shape1.move(t.scale(delta / 2));
-                if (!shape2.isFixed()) shape2.move(t.scale(-delta / 2));
+            let fakeCenterX = new Vector(shape2.getCenter().x, shape1.getPosition().y);
+            let diffY = shape1.getPosition().sum(fakeCenterY.scale(-1));
+            let diffX = shape1.getPosition().sum(fakeCenterX.scale(-1));
+            if (diffY.length() < shape1.getRadius() + shape2.getHeight() / 2 && diffX.length() < shape1.getRadius() + shape2.getWidth() / 2) {
+                // let diff = diffX.sum(diffY);
+                // // let t = diff.scale(1 / diff.length());
+                // let t = diffY.scale(1 / diffY.length());
+                // let deltaY = shape1.getRadius() + shape2.getHeight() / 2 - diffY.length();
+                // let deltaX = shape1.getRadius() + shape2.getWidth() / 2 - diffX.length();
+                // if (!shape1.isFixed()) shape1.move(new Vector(t.x * deltaX, t.y * deltaY).scale(0.5));
+                // if (!shape2.isFixed()) shape2.move(new Vector(t.x * deltaX, t.y * deltaY).scale(-0.5));
             }
+            // if (diffY.length() < shape1.getRadius() + shape2.getWidth() / 2) {
+            //     let t = diffX.scale(1 / diffY.length());
+            //     let delta = shape1.getRadius() + shape2.getWidth() / 2 - diffY.length();
+            //     if (!shape1.isFixed()) shape1.move(t.scale(delta / 2));
+            //     if (!shape2.isFixed()) shape2.move(t.scale(-delta / 2));
+            // }
         } else if (isShape(shape1, "Rectangle") && isShape(shape2, "Circle")) {
             this.checkCollisions(shape2, shape1);
         }
@@ -84,28 +98,28 @@ export default class Engine {
 
             // Left
             if (currentShape.getRadius() > currentShape.getPosition().x) {
-                currentShape.setAcceleration(new Vector(-currentShape.getAcceleration().x, currentShape.getAcceleration().y));
+                // currentShape.setAcceleration(new Vector(-currentShape.getAcceleration().x, currentShape.getAcceleration().y));
                 currentShape.setPosition(currentShape.getRadius(), currentShape.getPosition().y);
             }
             // Right
             if (currentShape.getPosition().x > this.canvas.width - currentShape.getRadius()) {
-                currentShape.setAcceleration(new Vector(-currentShape.getAcceleration().x, currentShape.getAcceleration().y));
+                // currentShape.setAcceleration(new Vector(-currentShape.getAcceleration().x, currentShape.getAcceleration().y));
                 currentShape.setPosition(this.canvas.width - currentShape.getRadius(), currentShape.getPosition().y);
             }
             // Bottom
             if (currentShape.getPosition().y > this.canvas.height - currentShape.getRadius()) {
-                currentShape.setAcceleration(new Vector(currentShape.getAcceleration().x, -currentShape.getAcceleration().y));
+                // currentShape.setAcceleration(new Vector(currentShape.getAcceleration().x, -currentShape.getAcceleration().y));
                 currentShape.setPosition(currentShape.getPosition().x, this.canvas.height - currentShape.getRadius());
             }
             // Top
             if (currentShape.getPosition().y < currentShape.getRadius()) {
-                currentShape.setAcceleration(new Vector(currentShape.getAcceleration().x, -currentShape.getAcceleration().y));
+                // currentShape.setAcceleration(new Vector(currentShape.getAcceleration().x, -currentShape.getAcceleration().y));
                 currentShape.setPosition(currentShape.getPosition().x, currentShape.getRadius());
             }
         }
     }
 
-    loop(delta: number) {
+    loop(deltaTime: number) {
         this.applyConstraints();
         this.createCollisionGrid();
         this.draw();
@@ -113,7 +127,7 @@ export default class Engine {
         const checkHash: string[] = [];
 
         for (const currentShape of this.shapes) {
-            currentShape.update(delta);
+            currentShape.update(deltaTime);
 
             if (currentShape.indexes) {
                 for (const { x, y } of currentShape.indexes) {
