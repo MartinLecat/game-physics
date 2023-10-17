@@ -1,11 +1,10 @@
 import Circle from "./utils/Circle";
 import Engine from "./utils/Engine";
 import Rectangle from "./utils/Rectangle";
-import Vector from "./utils/Vector";
 
 declare global {
     interface Window {
-        engine: Engine;
+        engine?: Engine;
     }
 }
 
@@ -34,23 +33,31 @@ document.body.appendChild(loopBtn);
 document.body.appendChild(resetBtn);
 
 Engine.DEBUG = true;
-const engine = new Engine(canvas, [
-    new Circle({ x: 250, y: 240, radius: 25 }),
-    // new Circle({ x: 250, y: 650, radius: 250, fixed: true }),
-    // new Circle({ x: 250, y: -150, radius: 250, fixed: true }),
-    // new Circle({ x: -150, y: 250, radius: 250, fixed: true }),
-    // new Circle({ x: 650, y: 250, radius: 250, fixed: true }),
-    new Rectangle({ x: 50, y: 350, width: 400, height: 50, fixed: true, name: "Fix" }),
-]);
+function resetEngine() {
+    window["engine"]?.stop();
+    delete window["engine"];
+    window["engine"] = new Engine(canvas, [
+        // new Circle({ x: 250, y: 240, radius: 25 }),
+        new Circle({ x: 240, y: 450, radius: 10, name: "S1" }),
+        new Circle({ x: 260, y: 450, radius: 10, name: "S2" }),
+        // new Circle({ x: 250, y: 650, radius: 250, fixed: true }),
+        // new Circle({ x: 250, y: -150, radius: 250, fixed: true }),
+        // new Circle({ x: -150, y: 250, radius: 250, fixed: true }),
+        // new Circle({ x: 650, y: 250, radius: 250, fixed: true }),
+        // new Rectangle({ x: 50, y: 350, width: 400, height: 50, fixed: true, name: "Fix" }),
+    ]);
+    window["engine"].draw();
+}
 
-stopBtn.addEventListener("click", () => engine.stop());
-startBtn.addEventListener("click", () => engine.start());
-loopBtn.addEventListener("click", () => engine.loop(0));
-resetBtn.addEventListener("click", () => window.location.reload());
+stopBtn.addEventListener("click", () => window["engine"]?.stop());
+startBtn.addEventListener("click", () => window["engine"]?.start());
+loopBtn.addEventListener("click", () => window["engine"]?.loop(0));
+resetBtn.addEventListener("click", resetEngine);
 canvas.addEventListener("click", function (event) {
+    event.preventDefault();
     const rect = canvas.getBoundingClientRect();
     for (let i = 0; i < 1; i++) {
-        engine.insertShape(
+        window["engine"]?.insertShape(
             new Circle({
                 x: event.clientX - rect.left,
                 y: event.clientY - rect.top,
@@ -59,5 +66,4 @@ canvas.addEventListener("click", function (event) {
         );
     }
 });
-
-window.engine = engine;
+resetEngine();
