@@ -16,6 +16,7 @@ export default interface Shape {
     setPosition(x: number, y: number): this;
     setPosition(v: Vector): this;
     getPosition(): Vector;
+    getPreviousPosition(): Vector;
 
     move(x: number, y: number): this;
     move(v: Vector): this;
