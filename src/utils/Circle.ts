@@ -74,16 +74,21 @@ export default class Circle implements Shape {
     setPosition(x: number, y: number): this;
     setPosition(v: Vector): this;
     setPosition(x: number | Vector, y?: number): this {
+        let v: Vector;
         if (typeof x === "number" && typeof y === "number") {
-            this.position = new Vector(x, y);
+            v = new Vector(x, y);
         } else {
-            this.position = x as Vector;
+            v = x as Vector;
         }
+        this.position = v;
 
         return this;
     }
     getPosition() {
         return this.position;
+    }
+    getPreviousPosition(): Vector {
+        return this.previousPosition;
     }
 
     /*
