@@ -14,6 +14,9 @@ export default class Vector {
     scale(s: number) {
         return new Vector(this.x * s, this.y * s);
     }
+    factor(sx: number, sy: number) {
+        return new Vector(this.x * sx, this.y * sy);
+    }
     length() {
         return Math.sqrt(this.x ** 2 + this.y ** 2);
     }
