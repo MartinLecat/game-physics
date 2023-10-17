@@ -17,10 +17,10 @@ export default class Rectangle implements Shape {
     private previousPosition: Vector;
     private acceleration: Vector;
 
-    private topLeft: Vector;
-    private topRight: Vector;
-    private bottomLeft: Vector;
-    private bottomRight: Vector;
+    public topLeft: Vector;
+    public topRight: Vector;
+    public bottomLeft: Vector;
+    public bottomRight: Vector;
 
     private width: number;
     private height: number;
@@ -90,11 +90,18 @@ export default class Rectangle implements Shape {
         } else {
             v = x as Vector;
         }
+        this.topLeft = v;
+        this.topRight = v;
+        this.bottomLeft = v;
+        this.bottomRight = v;
 
         return this;
     }
     getPosition() {
         return this.topLeft;
+    }
+    getPreviousPosition(): Vector {
+        return this.previousPosition;
     }
 
     /*
@@ -126,10 +133,10 @@ export default class Rectangle implements Shape {
      */
     getGridPosition(cellSize: number): { minCol: number; maxCol: number; minRow: number; maxRow: number } {
         return {
-            minCol: Math.floor(Math.min(this.topLeft.x, this.topRight.x) / cellSize),
-            maxCol: Math.floor(Math.max(this.topLeft.x, this.topRight.x) / cellSize),
-            minRow: Math.floor(Math.min(this.bottomLeft.y, this.bottomRight.y) / cellSize),
-            maxRow: Math.floor(Math.max(this.bottomLeft.y, this.bottomRight.y) / cellSize),
+            minCol: Math.floor(Math.min(this.topLeft.x, this.bottomRight.x) / cellSize),
+            maxCol: Math.floor(Math.max(this.topLeft.x, this.bottomRight.x) / cellSize),
+            minRow: Math.floor(Math.min(this.topLeft.y, this.bottomRight.y) / cellSize),
+            maxRow: Math.floor(Math.max(this.topLeft.y, this.bottomRight.y) / cellSize),
         };
     }
     /**
